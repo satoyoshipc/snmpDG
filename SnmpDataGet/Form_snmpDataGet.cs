@@ -53,8 +53,8 @@ namespace SnmpDGet
 			e.Item = new ListViewItem(
 				new String[]
 				{ 
-					Convert.ToString(row[1]), 
 					Convert.ToString(row[0]), 
+					Convert.ToString(row[1]), 
 					Convert.ToString(row[2]), 
 					Convert.ToString(row[3])
 					});
