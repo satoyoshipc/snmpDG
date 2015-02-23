@@ -19,8 +19,14 @@ namespace SnmpDGet
 
 		//ログのインスタンス定義
 		Class_TextLog CLog = new Class_TextLog();
+        
+        //テーブル表示のデータテーブル
 		DataTable dt ;
-		private int sort_kind = 0;
+
+        //一括表示用のデータテーブル
+        DataTable dt_list;
+
+        private int sort_kind = 0;
 
 		//walkの時のOIDは固定
 		private static string WALKOID = ".1.3.6.1.2.1";
@@ -59,6 +65,23 @@ namespace SnmpDGet
 					Convert.ToString(row[3])
 					});
 		}
+
+        void manyList_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+
+            //	e.Item = _item[e.ItemIndex];
+            DataRow row = dt_list.Rows[e.ItemIndex];
+            e.Item = new ListViewItem(
+                new String[]
+				{ 
+					Convert.ToString(row[0]), 
+					Convert.ToString(row[1]), 
+					Convert.ToString(row[2]), 
+					Convert.ToString(row[3]),
+					Convert.ToString(row[4]),
+   					Convert.ToString(row[5])
+                });
+        }
         //表示前処理
         private void Form_snmpDataGet_Load(object sender, EventArgs e)
         {
@@ -85,6 +108,26 @@ namespace SnmpDGet
 
 				//Hook up handlers for VirtualMode events.
 				listView2.RetrieveVirtualItem += new RetrieveVirtualItemEventHandler(listView2_RetrieveVirtualItem);
+
+
+
+                this.manyList.VirtualMode = true;
+                // １行全体選択
+                this.manyList.FullRowSelect = true;
+                this.manyList.HideSelection = false;
+                this.manyList.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+                //Hook up handlers for VirtualMode events.
+                this.manyList.RetrieveVirtualItem += new RetrieveVirtualItemEventHandler(manyList_RetrieveVirtualItem);
+                this.manyList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+
+
+                // Column追加
+                this.manyList.Columns.Insert(0, "No", 30, HorizontalAlignment.Left);
+                this.manyList.Columns.Insert(1, "IPアドレス", 180, HorizontalAlignment.Left);
+                this.manyList.Columns.Insert(2, "バージョン", 30, HorizontalAlignment.Left);
+                this.manyList.Columns.Insert(3, "コミュニティ", 30, HorizontalAlignment.Left);
+                this.manyList.Columns.Insert(4, "ホスト名", 80, HorizontalAlignment.Left);
+                this.manyList.Columns.Insert(5, "機器の説明(sysDescr)", 180, HorizontalAlignment.Left);
 
 
 				// 指定されたドメインでのみ起動を行う
@@ -126,11 +169,12 @@ namespace SnmpDGet
 				bgworker.WorkerSupportsCancellation = true;
 
 				suspendBtn.Enabled = false;
-
+                this.m_readBtn.Enabled = false;
 
 				this.tabControl1.TabPages[0].Text = "System";
 				this.tabControl1.TabPages[1].Text = "Interfaces";
 				this.tabControl1.TabPages[2].Text = "一覧";
+                this.tabControl1.TabPages[3].Text = "一括実行";
 
 				//OIDをコンボボックスに設定
 				//コンボボックスの値はファイルから読み込む
@@ -147,6 +191,9 @@ namespace SnmpDGet
 				//dataGridView1.RowHeadersVisible = false;
             
 				this.m_versioncombo.SelectedIndex = 1;
+
+                this.m_selectBtn.Enabled = true;
+
 
 				//バージョン情報
 				System.Diagnostics.FileVersionInfo ver = 
@@ -205,72 +252,98 @@ namespace SnmpDGet
 			int i = 0;
 			//パラメータを取得
 			string[] args = System.Environment.GetCommandLineArgs();
+            try
+            {
 
-			for (i = 0; i < args.Length; i++)
-			{
-				switch (args[i])
-				{
-					//ホスト名IPアドレス
-					case "-ip":
-					case "-IP":
-						i += 1;
-						if (i < args.Length)
-						{
-							param.ipaddress = args[i].Trim('"');
-							flgDict["ipaddress"] = true;
-						}
-						continue;
+                for (i = 0; i < args.Length; i++)
+                {
+                    switch (args[i])
+                    {
+                        //ホスト名IPアドレス
+                        case "-f":
+                        case "-F":
+                            i += 1;
+                            this.tabControl1.SelectedIndex = 3;
+                            this.m_listFile.Text = args[i].Trim('"', '\'');
+                            int ret = 0;
+                            try
+                            {
+                                ret = fileExecute();
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show("一括実行　ファイル読込時" + ex.Message);
+                                ret = -1;
+                            }
 
-					//実行タイプ
-					//get 
-					//walk or bulk 
-					//table
-					case "-t":
-					case "-T": 
-						i += 1;
-						if (i < args.Length)
-						{
-							param.type = args[i].Trim('"').ToLower();
-							flgDict["type"] = true;
-						}
-						continue;
-					//バージョン
-					case "-v":
-					case "-V":
-						i += 1;
+                            return ret;
+                        //ホスト名IPアドレス
+                        case "-ip":
+                        case "-IP":
+                            i += 1;
+                            if (i < args.Length)
+                            {
+                                param.ipaddress = args[i].Trim('"', '\'');
+                                flgDict["ipaddress"] = true;
+                            }
+                            continue;
 
-						if (i < args.Length)
-						{
-							param.version = args[i].Trim('"').ToLower();
+                        //実行タイプ
+                        //get 
+                        //walk or bulk 
+                        //table
+                        case "-t":
+                        case "-T":
+                            i += 1;
+                            if (i < args.Length)
+                            {
+                                param.type = args[i].Trim('"', '\'').ToLower();
+                                flgDict["type"] = true;
+                            }
+                            continue;
+                        //バージョン
+                        case "-v":
+                        case "-V":
+                            i += 1;
 
-							flgDict["version"] = true;
-						}
-						continue;
-					//コミュニティ 
-					case "-c":
-					case "-C":
-						i += 1;
+                            if (i < args.Length)
+                            {
+                                param.version = args[i].Trim('"', '\'').ToLower();
 
-						if (i < args.Length)
-						{
-							param.community = args[i].Trim('"').ToLower();
-							flgDict["community"] = true;
-						}
-						continue;
-					//OID
-					case "-o":
-					case "-O":
+                                flgDict["version"] = true;
+                            }
+                            continue;
+                        //コミュニティ 
+                        case "-c":
+                        case "-C":
+                            i += 1;
 
-						i += 1;
+                            if (i < args.Length)
+                            {
+                                param.community = args[i].Trim('"', '\'').ToLower();
+                                flgDict["community"] = true;
+                            }
+                            continue;
+                        //OID
+                        case "-o":
+                        case "-O":
 
-						if (i < args.Length )
-						{
-							param.oid = args[i].Trim('"');
-							flgDict["oid"] = true;
-						}
-						continue;
-				}
-			}
+                            i += 1;
+
+                            if (i < args.Length)
+                            {
+                                param.oid = args[i].Trim('"', '\'');
+                                flgDict["oid"] = true;
+                            }
+                            continue;
+                    }
+
+                }
+            }
+            catch(Exception ex){
+                MessageBox.Show("パラメータが取得できませんでした。" +  ex.Message);
+                return -1;
+            }
 			//パラメータの入力チェック
 			//GETでOIDの入力がなかったらエラー
 			foreach (KeyValuePair<string, Boolean> vdict in flgDict)
@@ -356,6 +429,7 @@ namespace SnmpDGet
         {
 			
 			int index = this.tabControl1.SelectedIndex;
+
 			//ログ書き込みの開始
 			CLog.Open(Properties.Settings.Default.LogFilePath);
 
@@ -365,44 +439,77 @@ namespace SnmpDGet
 		// SNMPGETを行う
 		private void executeSnmpGet(int index)
 		{
+            if (this.tabControl1.SelectedIndex != 3)
+            {
+                //入力チェック
+                if (this.m_host.Text == "")
+                {
+                    MessageBox.Show("ホスト名が未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    m_host.Focus();
+                    CLog.Close();
+                    return;
+                }
+                if (this.m_commu.Text == "")
+                {
+                    MessageBox.Show("コミュニティが未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    m_commu.Focus();
+                    CLog.Close();
+                    return;
+                }
+                if (this.m_versioncombo.Text == "")
+                {
+                    MessageBox.Show("バージョンが未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    m_versioncombo.Focus();
+                    CLog.Close();
+                    return;
 
-			//入力チェック
-			if (this.m_host.Text == "")
-			{
-				MessageBox.Show("ホスト名が未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				m_host.Focus();
-				CLog.Close();
-				return;
-			}
-			if (this.m_commu.Text == "")
-			{
-				MessageBox.Show("コミュニティが未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				m_commu.Focus();
-				CLog.Close();
-				return;
-			}
-			if (this.m_versioncombo.Text == "")
-			{
-				MessageBox.Show("バージョンが未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				m_versioncombo.Focus();
-				CLog.Close();
-				return;
-
-			}
-			if (this.m_OIDcombo.Text == "" & (this.m_getRadio.Checked | this.m_walkRadio.Checked) )
-			{
-				MessageBox.Show("OIDが未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				m_OIDcombo.Focus();
-				CLog.Close();
-				return;
-			}
-
+                }
+                if (this.m_OIDcombo.Text == "" & (this.m_getRadio.Checked | this.m_walkRadio.Checked))
+                {
+                    MessageBox.Show("OIDが未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    m_OIDcombo.Focus();
+                    CLog.Close();
+                    return;
+                }
+            }
+            else
+            {
+                //一括実行が選択されているとき
+                if (this.m_listFile.Text == "")
+                {
+                    MessageBox.Show("ファイル名が未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    m_commu.Focus();
+                    CLog.Close();
+                    return;
+                }
+                //ファイルの読み込みを実行してください。
+                if (manyList.Items.Count == 0)
+                {
+                    MessageBox.Show("ファイルの読込を実行してください", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    m_commu.Focus();
+                    CLog.Close();
+                    return;
+                }
+                //一括実行のときのみ確認
+                if (MessageBox.Show("一括実行を実施します。よろしいですか？" + Environment.NewLine +
+                    "ファイル名：" + m_listFile.Text, "snmpdget", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    CLog.Close();
+                    return;
+                }
+            }
 			groupBox1.Enabled = false;
 			m_host.Enabled = false;
 			m_commu.Enabled = false;
 			m_versioncombo.Enabled = false;
 			m_OIDcombo.Enabled = false;
-			tabControl1.Enabled = false;
+
+            m_OIDcombo.Enabled = false;
+            m_OIDcombo.Enabled = false;
+            m_listFile.Enabled = false;
+            m_selectBtn.Enabled = false;
+
+            tabControl1.Enabled = false;
 
 			suspendBtn.Enabled = true;
 			m_end.Enabled = false;
@@ -412,111 +519,219 @@ namespace SnmpDGet
 			toolStripStatusLabel1.Text = "情報取得中....";
 			System.Windows.Forms.Application.DoEvents();
 
-			Class_InputData input = new Class_InputData();
+            Class_InputData input = new Class_InputData();
+            Cursor preCursor = Cursor.Current;
 
-			if (this.m_getRadio.Checked)
-			{
-				input.method = 1;
+            //一括実行選択時
+            if (this.tabControl1.SelectedIndex == 3)
+            {
 
-			}
-			else if (this.m_walkRadio.Checked)
-			{
-				input.method = 2;
+                //元のカーソルを保持
+                this.m_readBtn.Enabled = false;
+                Cursor.Current = Cursors.WaitCursor;
+                Stopwatch sw1 = new Stopwatch();
+                sw1.Start();
+                Class_snmpGet snmpget;
 
-			}
-
-			//元のカーソルを保持
-			Cursor preCursor = Cursor.Current;
-			Cursor.Current = Cursors.WaitCursor;
-			Stopwatch sw = new Stopwatch();
-			sw.Start();
-
-			input.hostname = this.m_host.Text;
-			input.community = this.m_commu.Text;
-			input.version = this.m_versioncombo.Text;
-
-			//OID取得
-			string str = this.m_OIDcombo.Text;
-			string outoid;
-			string[] starray = str.Split(',');
-			outoid = starray[0];
-			input.oid = outoid;
-
-			this.dataGridView1.Rows.Clear();
-			listView2.Clear();
-
-			m_sysDescr.Text = "";
-			m_sysObjectID.Text= "";
-			m_sysUpTime.Text = "";
-			m_sysContact.Text = "";
-			m_sysName.Text = "";
-			m_sysLocation.Text = "";
-			m_sysServices.Text = "";
-
-
-			
-			try
-			{
-				//system情報のみの場合
-				if (index == 0)
-					//GETリクエストを送信
-					systemDisp(input);
-				// テーブルが選択された時
-				else if(index == 1)
-					//.1.3.6.1.2.1.2.2
-					getTable(input);
-				else 
-					if (m_getRadio.Checked == true)
-						//GETの時
-						Dispget(input);
-					else
-						//input.oid = WALKOID;
-						//walk or tableの時
-						Displist(input);
-			}
-			catch (Exception ex)
-			{
-				string msg = "";
-				msg = ex.Message;
-				if (ex.Message.Contains("Request has reached maximum retries."))
-				{
-					msg = "リトライ回数に達しましたが、対象ホストにアクセスできませんでした。";
-				}
-				if (ex.Message.Contains("Unable to parse or resolve supplied value to an IP address."))
-				{
-					msg = "ホスト名/IPアドレスが正しく取得できませんでした。";
-				}
-				MessageBox.Show(msg, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-				CLog.Write(msg);
-				
-				return;
-			}
-			finally{
+                try
+                {
+                    //リストから読み込む
+                    for (int i = 0; i < manyList.Items.Count; i++)
+                    {
+                        //一覧表示
+                        input.hostname = manyList.Items[i].SubItems[1].Text;
+                        input.version = manyList.Items[i].SubItems[2].Text;
+                        input.community = manyList.Items[i].SubItems[3].Text;
+                        snmpget = new Class_snmpGet();
+                        try
+                        {
+                            snmpget.getSystemInfo(input, CLog);
+                            //データの挿入
+                            if (snmpget.systemhash == null)
+                            {
+                                MessageBox.Show("値を取得できませんでした。", "SnmpDGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                CLog.Write("一括 ERROR 値を取得できませんでした。ホスト名：" + input.hostname);
+                                CLog.Close();
+                                return;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            CLog.Write(ex.Message + " ホスト名：" + input.hostname);
+                            //MessageBox.Show(ex.Message);                          
+                        }
 
 
-				tabControl1.Enabled = true;
-				m_host.Enabled = true;
-				m_commu.Enabled = true;
-				m_versioncombo.Enabled = true;
-				
+                        dt_list.Rows[i]["No"] = i + 1;
+                        dt_list.Rows[i]["IPアドレス"] = input.hostname;
+                        dt_list.Rows[i]["バージョン"] = input.version;
+                        dt_list.Rows[i]["コミュニティ"] = input.community;
+                        if (snmpget.systemhash.Count <= 0)
+                        {
+                            dt_list.Rows[i]["ホスト名"] = "■エラー発生! 値を取得できませんでした。";
+                        }
+                        else {
+                            dt_list.Rows[i]["ホスト名"] = snmpget.systemhash["sysName"];
+                            dt_list.Rows[i]["機器の説明(sysDescr)"] = snmpget.systemhash["sysDescr"];
+                        }
 
-				if(this.tabControl1.SelectedIndex == 2){
-					m_OIDcombo.Enabled = true;
-					groupBox1.Enabled = true;
-				}
 
-				suspendBtn.Enabled = false;
-				m_end.Enabled = true;
-				m_OK.Enabled = true;
+                    }
+                    this.manyList.VirtualListSize = dt_list.Rows.Count;
+                    this.manyList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
-				toolStripStatusLabel1.Text = "";
-				Cursor.Current =  preCursor ;
-				sw.Stop();
-				toolStripStatusLabel1.Text = sw.Elapsed.ToString();
+                    //カラムの幅を合わせる
+                    foreach (ColumnHeader ch in this.manyList.Columns)
+                    {
+                        ch.Width = -1;
+                    }
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    CLog.Write(ex.Message);
+                    MessageBox.Show(ex.Message);
+                }
+                finally
+                {
 
-				if (CLog != null) CLog.Close();
-			}
+
+                    tabControl1.Enabled = true;
+
+                    this.m_listFile.Enabled = true;
+                    this.m_selectBtn.Enabled = true;
+                    this.m_readBtn.Enabled = true;
+
+                    m_host.Enabled = true;
+                    m_commu.Enabled = true;
+                    m_versioncombo.Enabled = true;
+
+
+                    suspendBtn.Enabled = false;
+                    m_end.Enabled = true;
+                    m_OK.Enabled = true;
+
+                    toolStripStatusLabel1.Text = "";
+                    Cursor.Current = preCursor;
+                    sw1.Stop();
+                    toolStripStatusLabel1.Text = sw1.Elapsed.ToString();
+
+                    if (CLog != null) CLog.Close();
+
+
+                }
+            }
+            else
+            {
+                if (this.m_getRadio.Checked)
+                {
+                    input.method = 1;
+
+                }
+                else if (this.m_walkRadio.Checked)
+                {
+                    input.method = 2;
+
+                }
+
+                //元のカーソルを保持
+
+                Cursor.Current = Cursors.WaitCursor;
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+
+                input.hostname = this.m_host.Text;
+                input.community = this.m_commu.Text;
+                input.version = this.m_versioncombo.Text;
+
+                //OID取得
+                string str = this.m_OIDcombo.Text;
+                string outoid;
+                string[] starray = str.Split(',');
+                outoid = starray[0];
+                input.oid = outoid;
+
+                this.dataGridView1.Rows.Clear();
+                listView2.Clear();
+
+                m_sysDescr.Text = "";
+                m_sysObjectID.Text = "";
+                m_sysUpTime.Text = "";
+                m_sysContact.Text = "";
+                m_sysName.Text = "";
+                m_sysLocation.Text = "";
+                m_sysServices.Text = "";
+
+
+
+                try
+                {
+                    //system情報のみの場合
+                    if (index == 0)
+                        //GETリクエストを送信
+                        systemDisp(input);
+                    // テーブルが選択された時
+                    else if (index == 1)
+                        //.1.3.6.1.2.1.2.2
+                        getTable(input);
+                    else
+                        if (m_getRadio.Checked == true)
+                            //GETの時
+                            Dispget(input);
+                        else
+                            //input.oid = WALKOID;
+                            //walk or tableの時
+                            Displist(input);
+                }
+                catch (Exception ex)
+                {
+                    string msg = "";
+                    msg = ex.Message;
+                    if (ex.Message.Contains("Request has reached maximum retries."))
+                    {
+                        msg = "リトライ回数に達しましたが、対象ホストにアクセスできませんでした。";
+                    }
+                    if (ex.Message.Contains("Unable to parse or resolve supplied value to an IP address."))
+                    {
+                        msg = "ホスト名/IPアドレスが正しく取得できませんでした。";
+                    }
+                    MessageBox.Show(msg, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    CLog.Write(msg);
+
+                    return;
+                }
+                finally
+                {
+
+
+                    tabControl1.Enabled = true;
+                    m_host.Enabled = true;
+                    m_commu.Enabled = true;
+                    m_versioncombo.Enabled = true;
+
+                    this.m_listFile.Enabled = true;
+                    this.m_selectBtn.Enabled = true;
+                    this.m_readBtn.Enabled = true;
+
+                    if (this.tabControl1.SelectedIndex == 2)
+                    {
+                        m_OIDcombo.Enabled = true;
+                        groupBox1.Enabled = true;
+                    }
+
+                    suspendBtn.Enabled = false;
+                    m_end.Enabled = true;
+                    m_OK.Enabled = true;
+
+                    toolStripStatusLabel1.Text = "";
+                    Cursor.Current = preCursor;
+                    sw.Stop();
+                    toolStripStatusLabel1.Text = sw.Elapsed.ToString();
+
+                    if (CLog != null) CLog.Close();
+                }
+            }
 		}
 
 		//テーブルタブ選択時
@@ -964,8 +1179,70 @@ namespace SnmpDGet
 					Clipboard.SetText(clip);
 				}
 			}
+            //3つめのタブ
+            else if (index == 3)
+            {
+                if (this.manyList.SelectedIndices.Count > 0)
+                {
+                    string clip = "";
+
+                    ListView.SelectedIndexCollection item = this.manyList.SelectedIndices;
+
+                    foreach (int idx in item)
+                    {
+                        clip += string.Format("{0},{1},{2},{3},{4},{5}" + Environment.NewLine,
+                                    manyList.Items[idx].SubItems[0].Text.TrimEnd('\0'),
+                                    manyList.Items[idx].SubItems[1].Text.TrimEnd('\0'),
+                                    manyList.Items[idx].SubItems[2].Text.TrimEnd('\0'),
+                                    manyList.Items[idx].SubItems[3].Text.TrimEnd('\0'),
+                                    manyList.Items[idx].SubItems[4].Text.TrimEnd('\0'),
+                                    manyList.Items[idx].SubItems[5].Text.TrimEnd('\0'));
+                    }
+                    Clipboard.SetText(clip);
+                }
+            }
 		}
 
+
+        //一括実行のキーダウン
+        private void manyList_KeyDown(object sender, KeyEventArgs e)
+        {
+            //Ctrl + c
+            if (e.KeyData == (Keys.Control | Keys.C))
+            {
+
+                if (manyList.SelectedIndices.Count > 0)
+                {
+                    string clip = "";
+
+                    ListView.SelectedIndexCollection item = manyList.SelectedIndices;
+
+                    foreach (int idx in item)
+                    {
+                        clip += string.Format("{0},{1},{2},{3},{4},{5}" + Environment.NewLine,
+                                    manyList.Items[idx].SubItems[0].Text.TrimEnd('\0'),
+                                    manyList.Items[idx].SubItems[1].Text.TrimEnd('\0'),
+                                    manyList.Items[idx].SubItems[2].Text.TrimEnd('\0'),
+                                    manyList.Items[idx].SubItems[3].Text.TrimEnd('\0'),
+                                    manyList.Items[idx].SubItems[4].Text.TrimEnd('\0'),
+                                    manyList.Items[idx].SubItems[5].Text.TrimEnd('\0'));
+                    }
+                    Clipboard.SetText(clip);
+                }
+            }
+            //全件選択
+            else if (e.KeyData == (Keys.Control | Keys.A))
+            {
+                manyList.BeginUpdate();
+
+                manyList.SelectedIndices.Clear();
+                for (int i = 0; i < this.dt_list.Rows.Count; ++i)
+                    manyList.SelectedIndices.Add(i);
+
+                manyList.EndUpdate();
+
+            }
+        }
 		//ダブルクリック
 		//テーブル
 		private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -1001,7 +1278,19 @@ namespace SnmpDGet
 			formdetail.Owner = this;
 		}
 
-		//リストビューのソート(walk)
+        //一括変更ダブルクリック
+        private void manyList_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ListView.SelectedIndexCollection item = this.manyList.SelectedIndices;
+
+            Form_detail formdetail = new Form_detail();
+            formdetail.oid = this.manyList.Items[item[0]].SubItems[1].Text;
+            formdetail.stringdata = this.manyList.Items[item[0]].SubItems[5].Text;
+            formdetail.Show();
+            formdetail.Owner = this;
+        }
+		
+        //リストビューのソート(walk)
 		private void listView2_ColumnClick(object sender, ColumnClickEventArgs e)
 		{
 			if (this.dt.Rows.Count <= 0)
@@ -1045,8 +1334,6 @@ namespace SnmpDGet
 				// ListView画面の再表示を行う
 				listView2.RedrawItems(start, listView2.Items.Count - 1, true);
 			}
-
-
 		}
 		
 		//タブが選択された時
@@ -1122,6 +1409,8 @@ namespace SnmpDGet
 				//実行する
 				executeSnmpGet(this.tabControl1.SelectedIndex);
 			}
+            m_host.Focus();
+            
 		}
 		//テーブルのソート
 		private void dataGridView1_SortCompare(object sender, DataGridViewSortCompareEventArgs e)
@@ -1182,6 +1471,199 @@ namespace SnmpDGet
 			}
 		}
 
+        //参照ボタン
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //ファイル選択ダイアログの表示
+            string str = "";
+            str = Disp_FileSelectDlg();
+            if (str != "")
+            {
+                m_listFile.Text = str;
+
+            }
+        }
+
+        //一括実行読み込み
+        private int fileExecute()
+        {
+
+            String retStr = string.Empty;
+            string filepath = string.Empty;
+            System.IO.StreamReader cReader;
+
+            filepath = m_listFile.Text;
+            try
+            { 
+                //ファイルの存在チェック
+                if (!File.Exists(filepath))
+                {
+                    // filePathのファイルは存在しない
+                    MessageBox.Show("指定されたファイルが見つかりませんでした。", "SnmpDG", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return -1;
+                }
+
+
+                // StreamReader の新しいインスタンスを生成する
+                cReader = (
+                    new System.IO.StreamReader(filepath, System.Text.Encoding.Default)
+                );
+                string fileContext = cReader.ReadToEnd();
+
+                cReader.Close();
+
+                System.IO.StringReader rs = new System.IO.StringReader(fileContext);
+                // 読み込んだ結果をすべて格納するための変数を宣言する
+                string[] stResult;
+                string csvdata = string.Empty;
+                int count = 0;
+                
+                //リストビューを初期化する
+                dt_list = new DataTable("table2");
+                dt_list.Columns.Add("No", Type.GetType("System.Int32"));
+                dt_list.Columns.Add("IPアドレス", Type.GetType("System.String"));
+                dt_list.Columns.Add("バージョン", Type.GetType("System.String"));
+                dt_list.Columns.Add("コミュニティ", Type.GetType("System.String"));
+                dt_list.Columns.Add("ホスト名", Type.GetType("System.String"));
+                dt_list.Columns.Add("機器の説明(sysDescr)", Type.GetType("System.String"));
+
+            
+                // 読み込みできる文字がなくなるまで繰り返す
+                while (rs.Peek() >= 0)
+                {
+                    count++;
+                    // ファイルを 1 行ずつ読み込む
+                    csvdata = rs.ReadLine();
+
+                    //配列に格納
+                    stResult = csvdata.Split(',');
+
+                    //IPアドレス
+                    string ip = stResult[0].Replace("\"", "");
+                    ip = ip.Replace("'", "");
+
+                    //バージョン情報
+                    string versioninfo = string.Empty;
+                    if (stResult.Length > 2)
+                    {
+                        //2があったらv2c
+                        if (stResult[1].IndexOf("2") >= 0 || stResult[1].IndexOf("２") >= 0)
+                        {
+                            versioninfo = "v2c";
+                        }
+                        //1だったらv1
+                        else if (stResult[1].IndexOf("1") >= 0 || stResult[1].IndexOf("１") >= 0)
+                        {
+                            versioninfo = "v1";
+                        }
+                        else
+                            versioninfo = "取得できませんでした。";
+
+                        //コミュニティ名
+                        string community = stResult[2].ToLower();
+                        community = community.Replace("\"", "");
+                        community = community.Replace("'", "");
+
+                        //データの挿入
+                        DataRow row = dt_list.NewRow();
+                        row["No"] = count;
+                        row["IPアドレス"] = ip;
+                        row["バージョン"] = versioninfo;
+                        row["コミュニティ"] = community;
+                        dt_list.Rows.Add(row);
+                    }
+                }
+
+                this.manyList.VirtualListSize = dt_list.Rows.Count;
+
+                //カラムの幅を合わせる
+                foreach (ColumnHeader ch in this.manyList.Columns)
+                {
+                   ch.Width = -1;
+                }
+
+                // rs を閉じる (正しくは オブジェクトの破棄を保証する を参照)
+                rs.Close();
+                return 1;
+            }
+            catch (Exception)
+            {
+
+                throw;
+
+            }
+
+        }
+
+        //ファイル選択ダイアログを表示
+        private string Disp_FileSelectDlg()
+        {
+
+            string retStr = "";
+
+            //OpenFileDialogクラスのインスタンスを作成
+            OpenFileDialog ofd = new OpenFileDialog();
+
+            //はじめのファイル名を指定する
+            //はじめに「ファイル名」で表示される文字列を指定する
+            ofd.FileName = "";
+            //はじめに表示されるフォルダを指定する
+            //指定しない（空の文字列）の時は、現在のディレクトリが表示される
+            ofd.InitialDirectory = "";
+            //[ファイルの種類]に表示される選択肢を指定する
+            //指定しないとすべてのファイルが表示される
+            ofd.Filter =
+                "すべてのファイル(*.*)|*.*";
+            //[ファイルの種類]ではじめに
+            //「すべてのファイル」が選択されているようにする
+            ofd.FilterIndex = 2;
+            //タイトルを設定する
+            ofd.Title = "開くファイルを選択してください";
+            //ダイアログボックスを閉じる前に現在のディレクトリを復元するようにする
+            ofd.RestoreDirectory = true;
+            //存在しないファイルの名前が指定されたとき警告を表示する
+            //デフォルトでTrueなので指定する必要はない
+            ofd.CheckFileExists = true;
+            //存在しないパスが指定されたとき警告を表示する
+            //デフォルトでTrueなので指定する必要はない
+            ofd.CheckPathExists = true;
+
+            //ダイアログを表示する
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                //OKボタンがクリックされたとき
+                //選択されたファイル名を表示する
+                retStr = ofd.FileName;
+            }
+
+            return retStr;
+        }
+
+        //読込みボタン
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+
+            try { 
+                fileExecute();
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("一括実行　ファイル読込時" + ex.Message);
+
+                return;
+            }
+            this.tabControl1.SelectedIndex = 3;
+        }
+
+        private void m_listFile_TextChanged(object sender, EventArgs e)
+        {
+            if (m_listFile.Text == "")
+                this.m_readBtn.Enabled = false;
+            else
+                this.m_readBtn.Enabled = true;
+            
+        }
 
 
 

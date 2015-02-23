@@ -38,7 +38,7 @@ namespace SnmpDGet
 
 
 		//システム情報の取得
-		public void getSystemInfo(Class_InputData input,Class_TextLog log)
+		public void getSystemInfo(Class_InputData input,Class_TextLog log,int tabnum = 1)
 		{
 
 			try
@@ -54,7 +54,10 @@ namespace SnmpDGet
 				//System情報の検索
 				foreach( KeyValuePair<string, string> systemhs in SYSTEMLIST)
 				{
-
+                    //一括のときはやらない
+                    if(tabnum == 3 && (systemhs.Key != "sysDescr" && systemhs.Key != "sysName" ))
+                        continue;
+                    
 					// Construct target
 					UdpTarget target = new UdpTarget((IPAddress)agent, 161, 2000, 1);
 
@@ -93,7 +96,7 @@ namespace SnmpDGet
 								}
 
 								systemhash[systemhs.Key] = value;
-								log.Write("GET項目：" + systemhs.Key + " "+ systemhs.Value  + " 値：" + value);
+                                log.Write("GET項目：" + input.hostname + " : " + systemhs.Key + " " + systemhs.Value + " 値：" + value);
 
 							}
 						}
@@ -142,7 +145,7 @@ namespace SnmpDGet
 								}
 								//取得した値を格納
 								_systemhash[systemhs.Key] = value;
-								log.Write("GET項目：" + systemhs.Key + " " + systemhs.Value + " 値：" + value);
+                                log.Write("GET項目：" + input.hostname + " : " + systemhs.Key + " " + systemhs.Value + " 値：" + value);
 
 
 							}

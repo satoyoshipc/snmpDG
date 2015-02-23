@@ -89,9 +89,15 @@
             this.コピーToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.listView2 = new System.Windows.Forms.ListView();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.manyList = new System.Windows.Forms.ListView();
             this.bgworker = new System.ComponentModel.BackgroundWorker();
             this.suspendBtn = new System.Windows.Forms.Button();
             this.m_versioninfo = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.m_listFile = new System.Windows.Forms.TextBox();
+            this.m_selectBtn = new System.Windows.Forms.Button();
+            this.m_readBtn = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -100,6 +106,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.SuspendLayout();
             // 
             // m_commu
@@ -108,7 +115,7 @@
             this.m_commu.Location = new System.Drawing.Point(114, 45);
             this.m_commu.Name = "m_commu";
             this.m_commu.Size = new System.Drawing.Size(180, 22);
-            this.m_commu.TabIndex = 3;
+            this.m_commu.TabIndex = 1;
             this.m_commu.Text = "public";
             // 
             // m_versioncombo
@@ -121,7 +128,7 @@
             this.m_versioncombo.Location = new System.Drawing.Point(114, 76);
             this.m_versioncombo.Name = "m_versioncombo";
             this.m_versioncombo.Size = new System.Drawing.Size(180, 23);
-            this.m_versioncombo.TabIndex = 5;
+            this.m_versioncombo.TabIndex = 2;
             // 
             // label1
             // 
@@ -152,7 +159,7 @@
             this.m_OIDcombo.Location = new System.Drawing.Point(114, 109);
             this.m_OIDcombo.Name = "m_OIDcombo";
             this.m_OIDcombo.Size = new System.Drawing.Size(278, 23);
-            this.m_OIDcombo.TabIndex = 7;
+            this.m_OIDcombo.TabIndex = 3;
             // 
             // m_host
             // 
@@ -164,7 +171,7 @@
             this.m_host.Location = new System.Drawing.Point(114, 17);
             this.m_host.Name = "m_host";
             this.m_host.Size = new System.Drawing.Size(585, 22);
-            this.m_host.TabIndex = 1;
+            this.m_host.TabIndex = 0;
             this.m_host.KeyDown += new System.Windows.Forms.KeyEventHandler(this.m_host_KeyDown);
             // 
             // label3
@@ -194,7 +201,7 @@
             this.m_OK.Location = new System.Drawing.Point(737, 12);
             this.m_OK.Name = "m_OK";
             this.m_OK.Size = new System.Drawing.Size(77, 47);
-            this.m_OK.TabIndex = 9;
+            this.m_OK.TabIndex = 8;
             this.m_OK.Text = "実行";
             this.m_OK.UseVisualStyleBackColor = true;
             this.m_OK.Click += new System.EventHandler(this.m_OK_Click);
@@ -206,7 +213,7 @@
             this.m_end.Location = new System.Drawing.Point(824, 12);
             this.m_end.Name = "m_end";
             this.m_end.Size = new System.Drawing.Size(77, 47);
-            this.m_end.TabIndex = 10;
+            this.m_end.TabIndex = 9;
             this.m_end.Text = "閉じる";
             this.m_end.UseVisualStyleBackColor = true;
             this.m_end.Click += new System.EventHandler(this.button2_Click);
@@ -257,7 +264,7 @@
             this.groupBox1.Location = new System.Drawing.Point(407, 100);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(223, 34);
-            this.groupBox1.TabIndex = 8;
+            this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             // 
             // tabControl1
@@ -268,11 +275,12 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.tabControl1.Location = new System.Drawing.Point(0, 145);
+            this.tabControl1.Location = new System.Drawing.Point(0, 180);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(911, 502);
+            this.tabControl1.Size = new System.Drawing.Size(911, 467);
             this.tabControl1.TabIndex = 12;
             this.tabControl1.Tag = "";
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
@@ -297,7 +305,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(903, 473);
+            this.tabPage1.Size = new System.Drawing.Size(903, 438);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             // 
@@ -307,7 +315,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_sysServices.BackColor = System.Drawing.SystemColors.Window;
             this.m_sysServices.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.m_sysServices.Location = new System.Drawing.Point(14, 422);
+            this.m_sysServices.Location = new System.Drawing.Point(14, 404);
             this.m_sysServices.Name = "m_sysServices";
             this.m_sysServices.ReadOnly = true;
             this.m_sysServices.Size = new System.Drawing.Size(836, 22);
@@ -318,7 +326,7 @@
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label10.Location = new System.Drawing.Point(15, 404);
+            this.label10.Location = new System.Drawing.Point(15, 386);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(322, 15);
             this.label10.TabIndex = 12;
@@ -330,7 +338,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_sysLocation.BackColor = System.Drawing.SystemColors.Window;
             this.m_sysLocation.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.m_sysLocation.Location = new System.Drawing.Point(14, 367);
+            this.m_sysLocation.Location = new System.Drawing.Point(14, 349);
             this.m_sysLocation.Name = "m_sysLocation";
             this.m_sysLocation.ReadOnly = true;
             this.m_sysLocation.Size = new System.Drawing.Size(836, 22);
@@ -341,7 +349,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label11.Location = new System.Drawing.Point(15, 347);
+            this.label11.Location = new System.Drawing.Point(15, 329);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(261, 15);
             this.label11.TabIndex = 10;
@@ -353,7 +361,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_sysName.BackColor = System.Drawing.SystemColors.Window;
             this.m_sysName.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.m_sysName.Location = new System.Drawing.Point(14, 306);
+            this.m_sysName.Location = new System.Drawing.Point(14, 288);
             this.m_sysName.Name = "m_sysName";
             this.m_sysName.ReadOnly = true;
             this.m_sysName.Size = new System.Drawing.Size(836, 22);
@@ -364,7 +372,7 @@
             // 
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label12.Location = new System.Drawing.Point(15, 288);
+            this.label12.Location = new System.Drawing.Point(15, 270);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(288, 15);
             this.label12.TabIndex = 8;
@@ -376,7 +384,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_sysContact.BackColor = System.Drawing.SystemColors.Window;
             this.m_sysContact.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.m_sysContact.Location = new System.Drawing.Point(14, 251);
+            this.m_sysContact.Location = new System.Drawing.Point(14, 233);
             this.m_sysContact.Name = "m_sysContact";
             this.m_sysContact.ReadOnly = true;
             this.m_sysContact.Size = new System.Drawing.Size(836, 22);
@@ -387,7 +395,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label7.Location = new System.Drawing.Point(15, 231);
+            this.label7.Location = new System.Drawing.Point(15, 213);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(308, 15);
             this.label7.TabIndex = 6;
@@ -399,7 +407,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_sysUpTime.BackColor = System.Drawing.SystemColors.Window;
             this.m_sysUpTime.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.m_sysUpTime.Location = new System.Drawing.Point(14, 189);
+            this.m_sysUpTime.Location = new System.Drawing.Point(14, 171);
             this.m_sysUpTime.Name = "m_sysUpTime";
             this.m_sysUpTime.ReadOnly = true;
             this.m_sysUpTime.Size = new System.Drawing.Size(836, 22);
@@ -410,7 +418,7 @@
             // 
             this.labet10.AutoSize = true;
             this.labet10.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.labet10.Location = new System.Drawing.Point(15, 171);
+            this.labet10.Location = new System.Drawing.Point(15, 153);
             this.labet10.Name = "labet10";
             this.labet10.Size = new System.Drawing.Size(288, 15);
             this.labet10.TabIndex = 4;
@@ -422,7 +430,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_sysObjectID.BackColor = System.Drawing.SystemColors.Window;
             this.m_sysObjectID.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.m_sysObjectID.Location = new System.Drawing.Point(14, 132);
+            this.m_sysObjectID.Location = new System.Drawing.Point(14, 114);
             this.m_sysObjectID.Name = "m_sysObjectID";
             this.m_sysObjectID.ReadOnly = true;
             this.m_sysObjectID.Size = new System.Drawing.Size(836, 22);
@@ -433,7 +441,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label6.Location = new System.Drawing.Point(15, 114);
+            this.label6.Location = new System.Drawing.Point(15, 96);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(268, 15);
             this.label6.TabIndex = 2;
@@ -445,7 +453,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_sysDescr.BackColor = System.Drawing.SystemColors.Window;
             this.m_sysDescr.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.m_sysDescr.Location = new System.Drawing.Point(14, 48);
+            this.m_sysDescr.Location = new System.Drawing.Point(14, 30);
             this.m_sysDescr.Multiline = true;
             this.m_sysDescr.Name = "m_sysDescr";
             this.m_sysDescr.ReadOnly = true;
@@ -457,7 +465,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label5.Location = new System.Drawing.Point(15, 30);
+            this.label5.Location = new System.Drawing.Point(15, 12);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(244, 15);
             this.label5.TabIndex = 0;
@@ -469,7 +477,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(903, 473);
+            this.tabPage2.Size = new System.Drawing.Size(903, 438);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -511,7 +519,7 @@
             this.dataGridView1.RowHeadersWidth = 20;
             this.dataGridView1.RowTemplate.Height = 21;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(897, 467);
+            this.dataGridView1.Size = new System.Drawing.Size(897, 432);
             this.dataGridView1.TabIndex = 12;
             this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
             this.dataGridView1.SortCompare += new System.Windows.Forms.DataGridViewSortCompareEventHandler(this.dataGridView1_SortCompare);
@@ -673,7 +681,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 25);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(903, 473);
+            this.tabPage3.Size = new System.Drawing.Size(903, 438);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "tabPage3";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -686,7 +694,7 @@
             this.listView2.GridLines = true;
             this.listView2.Location = new System.Drawing.Point(3, 3);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(897, 467);
+            this.listView2.Size = new System.Drawing.Size(897, 432);
             this.listView2.TabIndex = 12;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
@@ -695,14 +703,41 @@
             this.listView2.DoubleClick += new System.EventHandler(this.listView2_DoubleClick);
             this.listView2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listView2_KeyDown);
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.manyList);
+            this.tabPage4.Location = new System.Drawing.Point(4, 25);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(903, 438);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "tabPage4";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // manyList
+            // 
+            this.manyList.ContextMenuStrip = this.contextMenuStrip1;
+            this.manyList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.manyList.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.manyList.GridLines = true;
+            this.manyList.Location = new System.Drawing.Point(3, 3);
+            this.manyList.Name = "manyList";
+            this.manyList.Size = new System.Drawing.Size(897, 432);
+            this.manyList.TabIndex = 13;
+            this.manyList.UseCompatibleStateImageBehavior = false;
+            this.manyList.View = System.Windows.Forms.View.Details;
+            this.manyList.VirtualMode = true;
+            this.manyList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.manyList_KeyDown);
+            this.manyList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.manyList_MouseDoubleClick);
+            // 
             // suspendBtn
             // 
             this.suspendBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.suspendBtn.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.suspendBtn.Location = new System.Drawing.Point(824, 106);
+            this.suspendBtn.Location = new System.Drawing.Point(824, 69);
             this.suspendBtn.Name = "suspendBtn";
             this.suspendBtn.Size = new System.Drawing.Size(77, 33);
-            this.suspendBtn.TabIndex = 11;
+            this.suspendBtn.TabIndex = 10;
             this.suspendBtn.Text = "中断";
             this.suspendBtn.UseVisualStyleBackColor = true;
             this.suspendBtn.Click += new System.EventHandler(this.suspendBtn_Click);
@@ -711,17 +746,66 @@
             // 
             this.m_versioninfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.m_versioninfo.AutoSize = true;
-            this.m_versioninfo.Location = new System.Drawing.Point(828, 148);
+            this.m_versioninfo.Location = new System.Drawing.Point(828, 111);
             this.m_versioninfo.Name = "m_versioninfo";
             this.m_versioninfo.Size = new System.Drawing.Size(42, 12);
             this.m_versioninfo.TabIndex = 14;
             this.m_versioninfo.Text = "version";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label8.Location = new System.Drawing.Point(15, 145);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(64, 15);
+            this.label8.TabIndex = 15;
+            this.label8.Text = "ファイル(&f)";
+            // 
+            // m_listFile
+            // 
+            this.m_listFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_listFile.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.m_listFile.Location = new System.Drawing.Point(114, 142);
+            this.m_listFile.Name = "m_listFile";
+            this.m_listFile.Size = new System.Drawing.Size(585, 22);
+            this.m_listFile.TabIndex = 5;
+            this.m_listFile.TextChanged += new System.EventHandler(this.m_listFile_TextChanged);
+            // 
+            // m_selectBtn
+            // 
+            this.m_selectBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_selectBtn.Font = new System.Drawing.Font("MS UI Gothic", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.m_selectBtn.Location = new System.Drawing.Point(704, 141);
+            this.m_selectBtn.Name = "m_selectBtn";
+            this.m_selectBtn.Size = new System.Drawing.Size(40, 23);
+            this.m_selectBtn.TabIndex = 6;
+            this.m_selectBtn.Text = "参照";
+            this.m_selectBtn.UseVisualStyleBackColor = true;
+            this.m_selectBtn.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // m_readBtn
+            // 
+            this.m_readBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_readBtn.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.m_readBtn.Location = new System.Drawing.Point(750, 141);
+            this.m_readBtn.Name = "m_readBtn";
+            this.m_readBtn.Size = new System.Drawing.Size(83, 23);
+            this.m_readBtn.TabIndex = 7;
+            this.m_readBtn.Text = "読込";
+            this.m_readBtn.UseVisualStyleBackColor = true;
+            this.m_readBtn.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // Form_snmpDataGet
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(911, 672);
+            this.Controls.Add(this.m_readBtn);
+            this.Controls.Add(this.m_selectBtn);
+            this.Controls.Add(this.m_listFile);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.m_versioninfo);
             this.Controls.Add(this.suspendBtn);
             this.Controls.Add(this.tabControl1);
@@ -752,6 +836,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -821,6 +906,12 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn Column20;
 		private System.Windows.Forms.DataGridViewTextBoxColumn Column21;
 		private System.Windows.Forms.DataGridViewTextBoxColumn Column22;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox m_listFile;
+        private System.Windows.Forms.Button m_selectBtn;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.ListView manyList;
+        private System.Windows.Forms.Button m_readBtn;
     }
 }
 
