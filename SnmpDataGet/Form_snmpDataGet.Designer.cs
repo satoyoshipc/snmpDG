@@ -115,7 +115,7 @@
             this.m_commu.Location = new System.Drawing.Point(114, 45);
             this.m_commu.Name = "m_commu";
             this.m_commu.Size = new System.Drawing.Size(180, 22);
-            this.m_commu.TabIndex = 1;
+            this.m_commu.TabIndex = 3;
             this.m_commu.Text = "public";
             // 
             // m_versioncombo
@@ -128,7 +128,7 @@
             this.m_versioncombo.Location = new System.Drawing.Point(114, 76);
             this.m_versioncombo.Name = "m_versioncombo";
             this.m_versioncombo.Size = new System.Drawing.Size(180, 23);
-            this.m_versioncombo.TabIndex = 2;
+            this.m_versioncombo.TabIndex = 5;
             // 
             // label1
             // 
@@ -159,7 +159,7 @@
             this.m_OIDcombo.Location = new System.Drawing.Point(114, 109);
             this.m_OIDcombo.Name = "m_OIDcombo";
             this.m_OIDcombo.Size = new System.Drawing.Size(278, 23);
-            this.m_OIDcombo.TabIndex = 3;
+            this.m_OIDcombo.TabIndex = 7;
             // 
             // m_host
             // 
@@ -171,7 +171,7 @@
             this.m_host.Location = new System.Drawing.Point(114, 17);
             this.m_host.Name = "m_host";
             this.m_host.Size = new System.Drawing.Size(585, 22);
-            this.m_host.TabIndex = 0;
+            this.m_host.TabIndex = 1;
             this.m_host.KeyDown += new System.Windows.Forms.KeyEventHandler(this.m_host_KeyDown);
             // 
             // label3
@@ -201,7 +201,7 @@
             this.m_OK.Location = new System.Drawing.Point(737, 12);
             this.m_OK.Name = "m_OK";
             this.m_OK.Size = new System.Drawing.Size(77, 47);
-            this.m_OK.TabIndex = 8;
+            this.m_OK.TabIndex = 13;
             this.m_OK.Text = "実行";
             this.m_OK.UseVisualStyleBackColor = true;
             this.m_OK.Click += new System.EventHandler(this.m_OK_Click);
@@ -213,7 +213,7 @@
             this.m_end.Location = new System.Drawing.Point(824, 12);
             this.m_end.Name = "m_end";
             this.m_end.Size = new System.Drawing.Size(77, 47);
-            this.m_end.TabIndex = 9;
+            this.m_end.TabIndex = 14;
             this.m_end.Text = "閉じる";
             this.m_end.UseVisualStyleBackColor = true;
             this.m_end.Click += new System.EventHandler(this.button2_Click);
@@ -264,7 +264,7 @@
             this.groupBox1.Location = new System.Drawing.Point(407, 100);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(223, 34);
-            this.groupBox1.TabIndex = 4;
+            this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             // 
             // tabControl1
@@ -737,7 +737,7 @@
             this.suspendBtn.Location = new System.Drawing.Point(824, 69);
             this.suspendBtn.Name = "suspendBtn";
             this.suspendBtn.Size = new System.Drawing.Size(77, 33);
-            this.suspendBtn.TabIndex = 10;
+            this.suspendBtn.TabIndex = 15;
             this.suspendBtn.Text = "中断";
             this.suspendBtn.UseVisualStyleBackColor = true;
             this.suspendBtn.Click += new System.EventHandler(this.suspendBtn_Click);
@@ -759,7 +759,7 @@
             this.label8.Location = new System.Drawing.Point(15, 145);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(64, 15);
-            this.label8.TabIndex = 15;
+            this.label8.TabIndex = 9;
             this.label8.Text = "ファイル(&f)";
             // 
             // m_listFile
@@ -770,17 +770,17 @@
             this.m_listFile.Location = new System.Drawing.Point(114, 142);
             this.m_listFile.Name = "m_listFile";
             this.m_listFile.Size = new System.Drawing.Size(585, 22);
-            this.m_listFile.TabIndex = 5;
+            this.m_listFile.TabIndex = 10;
             this.m_listFile.TextChanged += new System.EventHandler(this.m_listFile_TextChanged);
             // 
             // m_selectBtn
             // 
             this.m_selectBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.m_selectBtn.Font = new System.Drawing.Font("MS UI Gothic", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.m_selectBtn.Location = new System.Drawing.Point(704, 141);
+            this.m_selectBtn.Location = new System.Drawing.Point(700, 141);
             this.m_selectBtn.Name = "m_selectBtn";
             this.m_selectBtn.Size = new System.Drawing.Size(40, 23);
-            this.m_selectBtn.TabIndex = 6;
+            this.m_selectBtn.TabIndex = 11;
             this.m_selectBtn.Text = "参照";
             this.m_selectBtn.UseVisualStyleBackColor = true;
             this.m_selectBtn.Click += new System.EventHandler(this.button1_Click);
@@ -789,10 +789,10 @@
             // 
             this.m_readBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.m_readBtn.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.m_readBtn.Location = new System.Drawing.Point(750, 141);
+            this.m_readBtn.Location = new System.Drawing.Point(746, 141);
             this.m_readBtn.Name = "m_readBtn";
             this.m_readBtn.Size = new System.Drawing.Size(83, 23);
-            this.m_readBtn.TabIndex = 7;
+            this.m_readBtn.TabIndex = 12;
             this.m_readBtn.Text = "読込";
             this.m_readBtn.UseVisualStyleBackColor = true;
             this.m_readBtn.Click += new System.EventHandler(this.button1_Click_1);
