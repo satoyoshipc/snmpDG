@@ -724,23 +724,38 @@ namespace SnmpDGet
 		}
 
 		//ファイルを読み込みデータを取得
-		private void getComboData()
+        private void getComboData()
 		{
-			string line = "";
-			getlist = new ArrayList();
+            try
+            {
 
-			using (StreamReader sr = new StreamReader(
-					"getOIDList.txt", Encoding.GetEncoding("Shift_JIS")))
-			{
-				while ((line = sr.ReadLine()) != null)
-				{
-					//#はコメント
-					if(line.StartsWith("#")){
-						continue;
-					}
-					getlist.Add(line.Trim());
-				}
-			}
+
+                string line = "";
+                getlist = new ArrayList();
+
+                string path = System.Windows.Forms.Application.StartupPath;
+
+                
+                using (StreamReader sr = new StreamReader(
+                        path + "\\" + "getOIDList.txt", Encoding.GetEncoding("Shift_JIS")))
+                {
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        //#はコメント
+                        if (line.StartsWith("#"))
+                        {
+                            continue;
+                        }
+                        getlist.Add(line.Trim());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                CLog.Write("ファイル読み込み時のエラー" + ex.Message);
+                MessageBox.Show("ファイル読み込み時のエラー" + ex.Message , "SnmpDGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
 		}
 
 		//閉じるボタン
