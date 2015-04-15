@@ -727,6 +727,7 @@
             this.manyList.UseCompatibleStateImageBehavior = false;
             this.manyList.View = System.Windows.Forms.View.Details;
             this.manyList.VirtualMode = true;
+            this.manyList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.manyList_ColumnClick);
             this.manyList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.manyList_KeyDown);
             this.manyList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.manyList_MouseDoubleClick);
             // 

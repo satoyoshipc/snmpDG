@@ -27,6 +27,8 @@ namespace SnmpDGet
         DataTable dt_list;
 
         private int sort_kind = 0;
+        
+        private int sort_ikkatu_kind = 0;
 
 		//walkの時のOIDは固定
 		private static string WALKOID = ".1.3.6.1.2.1";
@@ -115,7 +117,7 @@ namespace SnmpDGet
                 // １行全体選択
                 this.manyList.FullRowSelect = true;
                 this.manyList.HideSelection = false;
-                this.manyList.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+                this.manyList.HeaderStyle = ColumnHeaderStyle.Clickable;
                 //Hook up handlers for VirtualMode events.
                 this.manyList.RetrieveVirtualItem += new RetrieveVirtualItemEventHandler(manyList_RetrieveVirtualItem);
                 this.manyList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -272,7 +274,7 @@ namespace SnmpDGet
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show("一括実行　ファイル読込時" + ex.Message);
+                                MessageBox.Show("一括実行　ファイル読込時 " + ex.Message);
                                 ret = -1;
                             }
 
@@ -944,8 +946,13 @@ namespace SnmpDGet
 			string line = "";
 			getlist = new ArrayList();
 
-			using (StreamReader sr = new StreamReader(
-					"getOIDList.txt", Encoding.GetEncoding("Shift_JIS")))
+
+            string path = System.Windows.Forms.Application.StartupPath;
+
+
+            using (StreamReader sr = new StreamReader(
+                    path + "\\" + "getOIDList.txt", Encoding.GetEncoding("Shift_JIS")))
+
 			{
 				while ((line = sr.ReadLine()) != null)
 				{
@@ -1293,6 +1300,8 @@ namespace SnmpDGet
         //リストビューのソート(walk)
 		private void listView2_ColumnClick(object sender, ColumnClickEventArgs e)
 		{
+            if (this.dt == null)
+                return;
 			if (this.dt.Rows.Count <= 0)
 				return;
 			//DataViewクラス ソートするためのクラス
@@ -1560,10 +1569,16 @@ namespace SnmpDGet
                             versioninfo = "取得できませんでした。";
 
                         //コミュニティ名
-                        string community = stResult[2].ToLower();
+                        string community = stResult[2];
+                        
+                        if (stResult[2] == "") { 
+                            community = "public";
+                        }
+
+                        community = community.ToLower();
                         community = community.Replace("\"", "");
                         community = community.Replace("'", "");
-
+                        
                         //データの挿入
                         DataRow row = dt_list.NewRow();
                         row["No"] = count;
@@ -1663,6 +1678,60 @@ namespace SnmpDGet
             else
                 this.m_readBtn.Enabled = true;
             
+        }
+
+
+        //一括実行時のソート
+        private void manyList_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            if (this.dt_list == null)
+                return;
+            
+            if (this.dt_list.Rows.Count <= 0)
+                return;
+            //DataViewクラス ソートするためのクラス
+            DataView dv = new DataView(dt_list);
+
+            //一時クラス
+            DataTable dttmp = new DataTable();
+
+            String strSort = "";
+
+            //0なら昇順にソート
+            if (sort_ikkatu_kind == 0)
+            {
+                strSort = " ASC";
+                sort_ikkatu_kind = 1;
+            }
+            else
+            {
+                //１の時は昇順にソート
+                strSort = " DESC";
+                sort_ikkatu_kind = 0;
+            }
+
+            //コピーを作成
+            dttmp = dt_list.Clone();
+            //ソートを実行
+            dv.Sort = dt_list.Columns[e.Column].ColumnName + strSort;
+
+            // ソートされたレコードのコピー
+            foreach (DataRowView drv in dv)
+            {
+                // 一時テーブルに格納
+                dttmp.ImportRow(drv.Row);
+            }
+            //格納したテーブルデータを上書く
+            dt_list = dttmp.Copy();
+
+            //行が存在するかチェックを行う。
+            if (manyList.TopItem != null)
+            {
+                //現在一番上の行に表示されている行を取得
+                int start = manyList.TopItem.Index;
+                // ListView画面の再表示を行う
+                manyList.RedrawItems(start, manyList.Items.Count - 1, true);
+            }
         }
 
 
