@@ -315,7 +315,14 @@ namespace SnmpDGet
 				this.m_versioncombo.Text ="v2c";
 
 			}
+            else if (param.version == "0")
+            {
+                //0の時
+                CLog.Write("指定されたバージョンが不正です。");
+                MessageBox.Show("指定されたバージョンが不正です。", "SnmpDGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return -1;
 
+            }
 
 			return 0;
 
