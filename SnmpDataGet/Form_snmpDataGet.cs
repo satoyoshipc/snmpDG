@@ -9,6 +9,10 @@ using System.Collections;
 using System.Text;
 using System.Windows.Forms;
 
+using log4net;
+using log4net.Appender;
+using log4net.Repository.Hierarchy;
+
 namespace SnmpDGet
 {
     public partial class Form_snmpDataGet : Form
@@ -18,7 +22,10 @@ namespace SnmpDGet
 		List<Dictionary<string, string>> miblist;
 
 		//ログのインスタンス定義
-		Class_TextLog CLog = new Class_TextLog();
+        public static readonly ILog LOG = 
+            LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+
 		DataTable dt ;
 		private int sort_kind = 0;
 
@@ -63,7 +70,7 @@ namespace SnmpDGet
         private void Form_snmpDataGet_Load(object sender, EventArgs e)
         {
 			//ログファイルのオープン
-			CLog.Open(Properties.Settings.Default.LogFilePath);
+			//CLog.Open(Properties.Settings.Default.LogFilePath);
 
 			try { 
 				listView2.VirtualMode = true;
@@ -150,12 +157,12 @@ namespace SnmpDGet
 			}
 			catch(Exception ex)
 			{
-				CLog.Write(ex.Message);
+                LOG.ErrorFormat("Form_snmpDataGet_Load:{0}" ,ex.Message);
 				MessageBox.Show(ex.Message);
 
 			}
-			finally { 
-				if(CLog != null) CLog.Close();
+			finally {
+                //if (LOG != null) LOG.Close();
 			}
 		}
 
@@ -249,14 +256,14 @@ namespace SnmpDGet
 				{
 					if (vdict.Key == "oid" & param.type == "get")
 					{
-						CLog.Write("OIDを指定してください。");
+						LOG.ErrorFormat("OIDを指定してください。");
 						MessageBox.Show("OIDを指定してください。", "SnmpDGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 						return -1;
 					}
 					else if (vdict.Key != "oid" )
 					{
-						CLog.Write("パラメータが正しく設定されていません。");
+                        LOG.ErrorFormat("パラメータが正しく設定されていません。");
 						MessageBox.Show("パラメータが正しく設定されていません。", "SnmpDGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
 						return -1;
 
@@ -318,8 +325,8 @@ namespace SnmpDGet
             else if (param.version == "0")
             {
                 //0の時
-                CLog.Write("指定されたバージョンが不正です。");
-                MessageBox.Show("指定されたバージョンが不正です。", "SnmpDGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LOG.ErrorFormat("指定されたsnmpバージョンが不正です。");
+                MessageBox.Show("指定されたsnmpバージョンが不正です。", "SnmpDGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return -1;
 
             }
@@ -333,7 +340,7 @@ namespace SnmpDGet
 			
 			int index = this.tabControl1.SelectedIndex;
 			//ログ書き込みの開始
-			CLog.Open(Properties.Settings.Default.LogFilePath);
+			//CLog.Open(Properties.Settings.Default.LogFilePath);
 
 			executeSnmpGet(index);
 		}
@@ -347,21 +354,21 @@ namespace SnmpDGet
 			{
 				MessageBox.Show("ホスト名が未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				m_host.Focus();
-				CLog.Close();
+				//CLog.Close();
 				return;
 			}
 			if (this.m_commu.Text == "")
 			{
 				MessageBox.Show("コミュニティが未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				m_commu.Focus();
-				CLog.Close();
+                //CLog.Close();
 				return;
 			}
 			if (this.m_versioncombo.Text == "")
 			{
 				MessageBox.Show("バージョンが未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				m_versioncombo.Focus();
-				CLog.Close();
+                //CLog.Close();
 				return;
 
 			}
@@ -369,7 +376,7 @@ namespace SnmpDGet
 			{
 				MessageBox.Show("OIDが未入力です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				m_OIDcombo.Focus();
-				CLog.Close();
+                //CLog.Close();
 				return;
 			}
 
@@ -464,7 +471,7 @@ namespace SnmpDGet
 				}
 				MessageBox.Show(msg, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-				CLog.Write(msg);
+				//CLog.Write(msg);
 				
 				return;
 			}
@@ -491,7 +498,7 @@ namespace SnmpDGet
 				sw.Stop();
 				toolStripStatusLabel1.Text = sw.Elapsed.ToString();
 
-				if (CLog != null) CLog.Close();
+                //if (CLog != null) CLog.Close();
 			}
 		}
 
@@ -537,14 +544,14 @@ namespace SnmpDGet
 			Class_snmpGet snmpget = new Class_snmpGet();
 			try
 			{
-				CLog.Write("System  ホスト : " + input.hostname + " : " + input.version + " : " + input.community + " : " + input.oid);
-				snmpget.getSystemInfo(input, CLog);
+				LOG.InfoFormat("System  ホスト : " + input.hostname + " : " + input.version + " : " + input.community + " : " + input.oid);
+                snmpget.getSystemInfo(input, LOG);
 
 				//データの挿入
 				if (snmpget.systemhash == null)
 				{
 					MessageBox.Show("値を取得できませんでした。", "SnmpDGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					CLog.Write("System ERROR 値を取得できませんでした。ホスト名：" + input.hostname);
+                    LOG.ErrorFormat("System ERROR 値を取得できませんでした。ホスト名：" + input.hostname);
 					return;
 				}
 
@@ -585,10 +592,10 @@ namespace SnmpDGet
 			}
 			catch(Exception ex)
 			{
-				CLog.Write("System ERROR " + ex.Message + "ホスト名：" + input.hostname);
+                LOG.ErrorFormat("System ERROR {0} ホスト名：{1}", ex.Message, input.hostname);
 				throw;
 			}
-			CLog.Write("System 終了  ホスト名：" + input.hostname);
+            LOG.Info("System 終了  ホスト名：" + input.hostname);
 		}
 		//GETデータの表示
 		private void Dispget(Class_InputData input)
@@ -728,7 +735,7 @@ namespace SnmpDGet
             }
             catch (Exception ex)
             {
-                CLog.Write("ファイル読み込み時のエラー" + ex.Message);
+                LOG.ErrorFormat("ファイル読み込み時のエラー" + ex.Message);
                 MessageBox.Show("ファイル読み込み時のエラー" + ex.Message , "SnmpDGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
@@ -1108,7 +1115,7 @@ namespace SnmpDGet
 			if (e.KeyData == (Keys.Return)) 
 			{
 				//ログ書き込みの開始
-				CLog.Open(Properties.Settings.Default.LogFilePath);
+				//CLog.Open(Properties.Settings.Default.LogFilePath);
 
 				//実行する
 				executeSnmpGet(this.tabControl1.SelectedIndex);

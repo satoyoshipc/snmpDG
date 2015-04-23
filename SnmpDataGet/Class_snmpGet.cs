@@ -5,6 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
+using log4net;
+
+
 namespace SnmpDGet
 {
     class Class_snmpGet
@@ -38,7 +41,7 @@ namespace SnmpDGet
 
 
 		//システム情報の取得
-		public void getSystemInfo(Class_InputData input,Class_TextLog log)
+		public void getSystemInfo(Class_InputData input,ILog LOG)
 		{
 
 			try
@@ -77,7 +80,7 @@ namespace SnmpDGet
 							if (result.Pdu.ErrorStatus != 0)
 							{
 								// agent reported an error with the request
-								log.Write("Error in SNMP reply. Error " + result.Pdu.ErrorStatus + " index " + result.Pdu.ErrorIndex);
+                                LOG.ErrorFormat("Error in SNMP reply. Error " + result.Pdu.ErrorStatus + " index " + result.Pdu.ErrorIndex);
 							}
 							else
 							{
@@ -93,14 +96,13 @@ namespace SnmpDGet
 								}
 
 								systemhash[systemhs.Key] = value;
-								log.Write("GET項目：" + systemhs.Key + " "+ systemhs.Value  + " 値：" + value);
-
+                                LOG.InfoFormat("GET項目：{0} {1} 値：{2}", systemhs.Key, systemhs.Value, value);
 							}
 						}
 						else
 						{
 							//Console.WriteLine("SNMP agentからのレスポンスがありません.");
-							log.Write("SNMP agentからのレスポンスがありません.");
+                            LOG.ErrorFormat("SNMP agentからのレスポンスがありません.");
 						}
 
 					}
@@ -121,7 +123,7 @@ namespace SnmpDGet
 							{
 
 								// agent reported an error with the request
-								log.Write("Error in SNMP reply. Error " + result.Pdu.ErrorStatus.ToString() + " index " + result.Pdu.ErrorIndex.ToString());
+                                LOG.ErrorFormat("Error in SNMP reply. Error " + result.Pdu.ErrorStatus.ToString() + " index " + result.Pdu.ErrorIndex.ToString());
 								
 								//Console.WriteLine("Error in SNMP reply. Error {0} index {1}",
 								//result.Pdu.ErrorStatus,
@@ -142,14 +144,14 @@ namespace SnmpDGet
 								}
 								//取得した値を格納
 								_systemhash[systemhs.Key] = value;
-								log.Write("GET項目：" + systemhs.Key + " " + systemhs.Value + " 値：" + value);
+                                LOG.InfoFormat("GET項目：" + systemhs.Key + " " + systemhs.Value + " 値：" + value);
 
 
 							}
 						}
 						else
 						{
-							log.Write("SNMP agentからのレスポンスがありません.");
+                            LOG.ErrorFormat("SNMP agentからのレスポンスがありません.");
 							//Console.WriteLine("SNMP agentからのレスポンスがありません.");
 						}
 					}
