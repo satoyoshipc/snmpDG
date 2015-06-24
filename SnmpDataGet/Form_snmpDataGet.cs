@@ -94,7 +94,46 @@ namespace SnmpDGet
 				listView2.RetrieveVirtualItem += new RetrieveVirtualItemEventHandler(listView2_RetrieveVirtualItem);
 
 
-                //NECE用はドメインのチェックは行わない
+                ////////////////////////////////////////////////////////////////////////
+
+                // 指定されたドメインでのみ起動を行う
+                System.Net.IPHostEntry host;
+
+                host = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName());
+
+                // actwatch.com以外はエラー
+                if (!(host.HostName.EndsWith("actwatch.com")))
+                {
+                    if (System.Environment.GetCommandLineArgs().Length > 1)
+                    {
+                        //パラメータを取得
+                        string[] args = System.Environment.GetCommandLineArgs();
+                        //noがあった場合は普通に起動する
+                        if (args[1].ToLower().Trim() != "no")
+                        {
+                            MessageBox.Show("実行許可を取得できませんでした。");
+                            //CLog.Write("実行許可を取得できませんでした。");
+                            LOG.InfoFormat("実行許可を取得できませんでした。");
+
+
+                            //アプリケーションを終了する
+                            Application.Exit();
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("実行許可を取得できませんでした。");
+                        LOG.InfoFormat("実行許可を取得できませんでした。");
+
+                        //アプリケーションを終了する
+                        Application.Exit();
+                    }
+                }
+
+                ////////////////////////////////////////////////////////////////////////
+
+
+
 
 				//バックグランドワーカーのイベントハンドらの定義
 				//RunWorkerAsyncが呼び出された時
