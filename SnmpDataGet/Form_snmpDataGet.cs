@@ -1158,6 +1158,7 @@ namespace SnmpDGet
 
 				//実行する
 				executeSnmpGet(this.tabControl1.SelectedIndex);
+                m_host.Focus();
 			}
 		}
 		//テーブルのソート
