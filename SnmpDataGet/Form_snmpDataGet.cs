@@ -534,6 +534,7 @@ namespace SnmpDGet
                 Stopwatch sw1 = new Stopwatch();
                 sw1.Start();
                 Class_snmpGet snmpget;
+                //Class_snmpwalk snmpget;
 
                 try
                 {
@@ -544,10 +545,15 @@ namespace SnmpDGet
                         input.hostname = manyList.Items[i].SubItems[1].Text;
                         input.version = manyList.Items[i].SubItems[2].Text;
                         input.community = manyList.Items[i].SubItems[3].Text;
+
+
                         snmpget = new Class_snmpGet();
+
                         try
                         {
-                            snmpget.getSystemInfo(input, CLog);
+
+                            snmpget.getSystemInfo(input, CLog,3);
+
                             //データの挿入
                             if (snmpget.systemhash == null)
                             {
@@ -563,12 +569,11 @@ namespace SnmpDGet
                             //MessageBox.Show(ex.Message);                          
                         }
 
-
                         dt_list.Rows[i]["No"] = i + 1;
                         dt_list.Rows[i]["IPアドレス"] = input.hostname;
                         dt_list.Rows[i]["バージョン"] = input.version;
                         dt_list.Rows[i]["コミュニティ"] = input.community;
-                        if (snmpget.systemhash.Count <= 0)
+                        if (snmpget.systemhash.Count < 2)
                         {
                             dt_list.Rows[i]["ホスト名"] = "■エラー発生! 値を取得できませんでした。";
                         }
@@ -591,7 +596,7 @@ namespace SnmpDGet
                 }
                 catch (Exception ex)
                 {
-                    CLog.Write(ex.Message);
+                    CLog.Write("SNMPGETしたデータに不備がありました。" + ex.Message + input.hostname );
                     MessageBox.Show(ex.Message);
                 }
                 finally
@@ -663,9 +668,7 @@ namespace SnmpDGet
                 m_sysName.Text = "";
                 m_sysLocation.Text = "";
                 m_sysServices.Text = "";
-
-
-
+                
                 try
                 {
                     //system情報のみの場合
