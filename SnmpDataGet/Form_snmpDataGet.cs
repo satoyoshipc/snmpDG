@@ -773,66 +773,11 @@ namespace SnmpDGet
 			//dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
 			dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
 			//listView1.EndUpdate();		
-		}
+		
 
-		//システムタブの項目表示
-		private void systemDisp(Class_InputData input)
-		{			
-			Class_snmpGet snmpget = new Class_snmpGet();
-			try
-			{
-				CLog.Write("System  ホスト : " + input.hostname + " : " + input.version + " : " + input.community + " : " + input.oid);
-				snmpget.getSystemInfo(input, CLog);
-
-				//データの挿入
-				if (snmpget.systemhash == null)
-				{
-					MessageBox.Show("値を取得できませんでした。", "SnmpDGet", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					CLog.Write("System ERROR 値を取得できませんでした。ホスト名：" + input.hostname);
-					return;
-				}
-
-				foreach (KeyValuePair<string, string> v in snmpget.systemhash)
-				{
-					//システム
-					//ホスト名
-					if (v.Key.IndexOf("sysDescr") > -1)
-					{
-						this.m_sysDescr.Text = v.Value;
-					}
-					// オブジェクトID
-					else if (v.Key.IndexOf("sysObjectID") > -1)
-					{
-						this.m_sysObjectID.Text = v.Value;
-					}
-					else if (v.Key.IndexOf("sysUpTime") > -1)
-					{
-						this.m_sysUpTime.Text = v.Value;
-					}
-					else if (v.Key.IndexOf("sysContact") > -1)
-					{
-						this.m_sysContact.Text = v.Value;
-					}
-					else if (v.Key.IndexOf("sysName") > -1)
-					{
-						this.m_sysName.Text = v.Value;
-					}
-					else if (v.Key.IndexOf("sysLocation") > -1)
-					{
-						this.m_sysLocation.Text = v.Value;
-					}
-					else if (v.Key.IndexOf("sysServices") > -1)
-					{
-						this.m_sysServices.Text = v.Value;
-					}
-				}
-			}
-			catch(Exception ex)
-			{
-				CLog.Write("System ERROR " + ex.Message + "ホスト名：" + input.hostname);
-				throw;
-			}
+			//システムタブの項目表示
 			CLog.Write("System 終了  ホスト名：" + input.hostname);
+
 		}
 		//GETデータの表示
 		private void Dispget(Class_InputData input)
